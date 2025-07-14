@@ -2,9 +2,17 @@
 {
     public static class CollegeRepository
     {
-        public static List<Student> Students {  get; set; } = new List<Student> { new Student
+        public static List<Student> Students {  get; set; } = new List<Student> { 
+             new Student
             {
                 Id = 1,
+                Name = "Ankith",
+                Email = "Ankith@gmail.com",
+                Phone = "8976573601"
+            },
+             new Student
+            {
+                Id = 2,
                 Name = "Ankith",
                 Email = "Ankith@gmail.com",
                 Phone = "8976573601"

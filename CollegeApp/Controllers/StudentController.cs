@@ -25,10 +25,10 @@ namespace CollegeApp.Controllers
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
         public ActionResult<StudentDto> GetStudentById(int id)
-        {   
+        {
             if (id <= 0)
                 return BadRequest();
-            var student= CollegeRepository.Students.Where(s => s.Id == id).FirstOrDefault();
+            var student = CollegeRepository.Students.Where(s => s.Id == id).FirstOrDefault();
             if (student == null)
                 return NotFound();
             var studentDto = new StudentDto
@@ -64,6 +64,23 @@ namespace CollegeApp.Controllers
             var student = CollegeRepository.Students.Where(s => s.Id == id).FirstOrDefault();
             CollegeRepository.Students.Remove(student);
             return true;
+        }
+        [HttpPost]
+        [Route("addstudent")]
+        public ActionResult<StudentDto> AddStudent([FromBody]StudentDto studentDto)
+        {
+            if (studentDto == null)
+                return BadRequest();
+            var student = new Student
+            {
+                Id = CollegeRepository.Students.Max(s => s.Id) + 1,
+                Name = studentDto.Name,
+                Email = studentDto.Email,
+                Phone = studentDto.Phone
+            };
+            CollegeRepository.Students.Add(student);
+            studentDto.Id = student.Id; 
+            return Ok(studentDto);
         }
     }
 }

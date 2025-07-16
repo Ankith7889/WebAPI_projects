@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace CollegeApp.Controllers
 {
     [Route("api/[controller]")]
-    [ApiController]
+    [ApiController] // allows us to use model binding, validation, and other features
     public class StudentController : ControllerBase
     {
         [HttpGet]
@@ -67,10 +67,22 @@ namespace CollegeApp.Controllers
         }
         [HttpPost]
         [Route("addstudent")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public ActionResult<StudentDto> AddStudent([FromBody]StudentDto studentDto)
         {
+            // Validate the incoming data if we dont use apiController attribute
+            //if(ModelState.IsValid == false)
+            //    return BadRequest(ModelState);
             if (studentDto == null)
                 return BadRequest();
+            //to manual check validtion using modelState
+            //if (studentDto.AdmissionDate < DateTime.Now)
+            //{
+            //    ModelState.AddModelError("AdmissionDate Error", "Admission date cannot be in the past.");
+            //    return BadRequest(ModelState);
+            //}
             var student = new Student
             {
                 Id = CollegeRepository.Students.Max(s => s.Id) + 1,
@@ -79,7 +91,8 @@ namespace CollegeApp.Controllers
                 Phone = studentDto.Phone
             };
             CollegeRepository.Students.Add(student);
-            studentDto.Id = student.Id; 
+            studentDto.Id = student.Id;
+            return CreatedAtRoute("GetStudentById", new { id = studentDto.Id }, studentDto); //get url of newly created object
             return Ok(studentDto);
         }
     }

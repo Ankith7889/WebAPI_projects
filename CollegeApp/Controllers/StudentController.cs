@@ -88,7 +88,8 @@ namespace CollegeApp.Controllers
                 Id = CollegeRepository.Students.Max(s => s.Id) + 1,
                 Name = studentDto.Name,
                 Email = studentDto.Email,
-                Phone = studentDto.Phone
+                Phone = studentDto.Phone,
+                AdmissionDate = studentDto.AdmissionDate
             };
             CollegeRepository.Students.Add(student);
             studentDto.Id = student.Id;

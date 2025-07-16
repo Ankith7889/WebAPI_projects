@@ -58,6 +58,7 @@ namespace CollegeApp.Controllers
             };
             return Ok(studentDto);
         }
+
         [HttpDelete("{id:int}")]
         public bool DeleteStudentById(int id)
         {
@@ -65,12 +66,13 @@ namespace CollegeApp.Controllers
             CollegeRepository.Students.Remove(student);
             return true;
         }
+
         [HttpPost]
         [Route("addstudent")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public ActionResult<StudentDto> AddStudent([FromBody]StudentDto studentDto)
+        public ActionResult<StudentDto> AddStudent(StudentDto studentDto)
         {
             // Validate the incoming data if we dont use apiController attribute
             //if(ModelState.IsValid == false)
@@ -86,15 +88,35 @@ namespace CollegeApp.Controllers
             var student = new Student
             {
                 Id = CollegeRepository.Students.Max(s => s.Id) + 1,
-                Name = studentDto.Name,
+                Name = studentDto.Name, 
                 Email = studentDto.Email,
                 Phone = studentDto.Phone,
                 AdmissionDate = studentDto.AdmissionDate
             };
             CollegeRepository.Students.Add(student);
             studentDto.Id = student.Id;
-            return CreatedAtRoute("GetStudentById", new { id = studentDto.Id }, studentDto); //get url of newly created object
-            return Ok(studentDto);
+            return CreatedAtAction(nameof(GetStudentById), new { id = studentDto.Id }, studentDto);
+            //get url of newly created object
+        }
+
+        [HttpPut]
+        [Route("updatestudent")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public ActionResult UpdateStudent(StudentDto studentDto)
+        {
+            if (studentDto == null || studentDto.Id <= 0)
+                return BadRequest();
+            var student = CollegeRepository.Students.Where(s => s.Id == studentDto.Id).FirstOrDefault();
+            if (student == null)
+                return NotFound();
+            student.Name = studentDto.Name;
+            student.Email = studentDto.Email;
+            student.Phone = studentDto.Phone;
+            student.AdmissionDate = studentDto.AdmissionDate;
+            return NoContent();
         }
     }
 }

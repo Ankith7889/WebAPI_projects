@@ -8,9 +8,9 @@ namespace CollegeApp.Validators
         {
             if (value is DateTime dateValue)
             {
-                if (dateValue < DateTime.Now)
+                if (dateValue > DateTime.Now)
                 {
-                    return new ValidationResult("Date cannot be of past.");
+                    return new ValidationResult("Date cannot be of future.");
                 }
             }
             return ValidationResult.Success;

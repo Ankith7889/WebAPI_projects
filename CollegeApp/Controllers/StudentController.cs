@@ -1,6 +1,7 @@
 ﻿using CollegeApp.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.JsonPatch;
 
 namespace CollegeApp.Controllers
 {
@@ -68,7 +69,7 @@ namespace CollegeApp.Controllers
         }
 
         [HttpPost]
-        [Route("addstudent")]
+        [Route("addStudent")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -116,6 +117,42 @@ namespace CollegeApp.Controllers
             student.Email = studentDto.Email;
             student.Phone = studentDto.Phone;
             student.AdmissionDate = studentDto.AdmissionDate;
+            return NoContent();
+        }
+        [HttpPatch]
+        [Route("updatestudent/{id}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public ActionResult PatchStudent(int id, [FromBody] JsonPatchDocument<StudentDto> patchDoc)
+        {
+            if (patchDoc == null)
+                return BadRequest();
+
+            var student = CollegeRepository.Students.FirstOrDefault(s => s.Id == id);
+            if (student == null)
+                return NotFound();
+
+            var studentToPatch = new StudentDto
+            {
+                Id = student.Id,
+                Name = student.Name,
+                Email = student.Email,
+                Phone = student.Phone,
+                AdmissionDate = student.AdmissionDate
+            };
+
+            patchDoc.ApplyTo(studentToPatch);
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            student.Name = studentToPatch.Name;
+            student.Email = studentToPatch.Email;
+            student.Phone = studentToPatch.Phone;
+            student.AdmissionDate = studentToPatch.AdmissionDate;
+
             return NoContent();
         }
     }

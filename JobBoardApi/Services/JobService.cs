@@ -35,5 +35,10 @@ namespace JobBoardApi.Services
         {
             return await _jobRepository.GetByIdAsync(id);
         }
+        public async Task UpdateJobAsync(Job job)
+        {
+            await _jobRepository.SaveChangesAsync();  // job is already tracked
+        }
+
     }
 }

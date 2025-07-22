@@ -1,9 +1,12 @@
-﻿using JobBoardApi.Interfaces;
+﻿using System.Security.Claims;
+using JobBoardApi.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace JobBoardApi.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class ApplicationsController : ControllerBase
@@ -15,12 +18,18 @@ namespace JobBoardApi.Controllers
             _appService = appService;
         }
 
-        [HttpPost("{userId}/apply/{jobId}")]
-        public async Task<IActionResult> Apply(int userId, int jobId)
+        [HttpPost("apply/{jobId}")]
+        [Authorize(Roles = "User")]
+        public async Task<IActionResult> Apply(int jobId)
         {
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+            if (userIdClaim == null) return Unauthorized();
+
+            int userId = int.Parse(userIdClaim.Value);
             await _appService.ApplyToJobAsync(userId, jobId);
             return Ok(new { message = "Applied successfully" });
         }
+
 
         [HttpGet("user/{userId}")]
         public async Task<IActionResult> GetByUser(int userId)

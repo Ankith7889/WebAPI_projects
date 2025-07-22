@@ -1,4 +1,5 @@
-﻿using JobBoardApi.Interfaces;
+﻿using JobBoardApi.DTOs;
+using JobBoardApi.Interfaces;
 using JobBoardApi.Models;
 
 namespace JobBoardApi.Services
@@ -24,14 +25,34 @@ namespace JobBoardApi.Services
             await _appRepo.SaveChangesAsync();
         }
 
-        public async Task<IEnumerable<JobApplication>> GetApplicationsForUser(int userId)
+        public async Task<IEnumerable<JobApplicationDto>> GetApplicationsForUser(int userId)
         {
-            return await _appRepo.GetByUserIdAsync(userId);
+            var apps = await _appRepo.GetByUserIdAsync(userId);
+
+            return apps.Select(app => new JobApplicationDto
+            {
+                Id = app.Id,
+                JobId = app.JobId,
+                JobTitle = app.Job.Title,
+                UserId = app.UserId,
+                Username = app.User.Username,
+                AppliedAt = app.AppliedAt
+            });
         }
 
-        public async Task<IEnumerable<JobApplication>> GetApplicationsForJob(int jobId)
+        public async Task<IEnumerable<JobApplicationDto>> GetApplicationsForJob(int jobId)
         {
-            return await _appRepo.GetByJobIdAsync(jobId);
+            var apps = await _appRepo.GetByJobIdAsync(jobId);
+
+            return apps.Select(app => new JobApplicationDto
+            {
+                Id = app.Id,
+                JobId = app.JobId,
+                JobTitle = app.Job.Title,
+                UserId = app.UserId,
+                Username = app.User.Username,
+                AppliedAt = app.AppliedAt
+            });
         }
     }
 }

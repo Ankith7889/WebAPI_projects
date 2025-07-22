@@ -20,8 +20,9 @@ namespace JobBoardApi.Repositories
         public async Task<IEnumerable<JobApplication>> GetByJobIdAsync(int jobId)
         {
             return await _context.Applications
-                .Include(a => a.JobId)
-                .Where(a => a.JobId == jobId)   
+                .Where(a => a.JobId == jobId)
+                .Include(a => a.Job)      
+                .Include(a => a.User)     
                 .ToListAsync();
         }
 

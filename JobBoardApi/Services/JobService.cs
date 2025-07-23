@@ -1,4 +1,5 @@
-﻿using JobBoardApi.Interfaces;
+﻿using AutoMapper;
+using JobBoardApi.Interfaces;
 using JobBoardApi.Models;
 
 namespace JobBoardApi.Services
@@ -6,9 +7,11 @@ namespace JobBoardApi.Services
     public class JobService : IJobService
     {
         private readonly IJobRepository _jobRepository;
-        public JobService(IJobRepository jobRepository)
+        private readonly IMapper _mapper;
+        public JobService(IJobRepository jobRepository, IMapper mapper)
         { 
             _jobRepository = jobRepository;
+            _mapper = mapper;
         }
 
         public async Task<Job> CreateJobAsync(Job job)
@@ -37,7 +40,7 @@ namespace JobBoardApi.Services
         }
         public async Task UpdateJobAsync(Job job)
         {
-            await _jobRepository.SaveChangesAsync();  // job is already tracked
+            await _jobRepository.SaveChangesAsync();  
         }
 
     }

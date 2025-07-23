@@ -1,4 +1,5 @@
-﻿using JobBoardApi.DTOs;
+﻿using AutoMapper;
+using JobBoardApi.DTOs;
 using JobBoardApi.Interfaces;
 using JobBoardApi.Models;
 
@@ -7,10 +8,12 @@ namespace JobBoardApi.Services
     public class ApplicationService : IApplicationService
     {
         private readonly IApplicationRepository _appRepo;
+        private readonly IMapper _mapper;
 
-        public ApplicationService(IApplicationRepository appRepo)
+        public ApplicationService(IApplicationRepository appRepo, IMapper mapper)
         {
             _appRepo = appRepo;
+            _mapper = mapper;
         }
 
         public async Task ApplyToJobAsync(int userId, int jobId)
@@ -29,30 +32,13 @@ namespace JobBoardApi.Services
         {
             var apps = await _appRepo.GetByUserIdAsync(userId);
 
-            return apps.Select(app => new JobApplicationDto
-            {
-                Id = app.Id,
-                JobId = app.JobId,
-                JobTitle = app.Job.Title,
-                UserId = app.UserId,
-                Username = app.User.Username,
-                AppliedAt = app.AppliedAt
-            });
+            return _mapper.Map<IEnumerable<JobApplicationDto>>(apps);
         }
 
         public async Task<IEnumerable<JobApplicationDto>> GetApplicationsForJob(int jobId)
         {
             var apps = await _appRepo.GetByJobIdAsync(jobId);
-
-            return apps.Select(app => new JobApplicationDto
-            {
-                Id = app.Id,
-                JobId = app.JobId,
-                JobTitle = app.Job.Title,
-                UserId = app.UserId,
-                Username = app.User.Username,
-                AppliedAt = app.AppliedAt
-            });
+            return _mapper.Map<IEnumerable<JobApplicationDto>>(apps);
         }
     }
 }

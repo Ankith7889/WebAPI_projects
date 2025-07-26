@@ -1,4 +1,4 @@
-﻿using JobBoardApi.Models;
+﻿    using JobBoardApi.Models;
 
 namespace JobBoardApi.Interfaces
 {

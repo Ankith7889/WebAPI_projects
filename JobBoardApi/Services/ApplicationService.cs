@@ -31,7 +31,6 @@ namespace JobBoardApi.Services
         public async Task<IEnumerable<JobApplicationDto>> GetApplicationsForUser(int userId)
         {
             var apps = await _appRepo.GetByUserIdAsync(userId);
-
             return _mapper.Map<IEnumerable<JobApplicationDto>>(apps);
         }
 

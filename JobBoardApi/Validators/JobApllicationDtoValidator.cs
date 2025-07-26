@@ -1,8 +1,8 @@
-﻿namespace JobBoardApi.Validators
-{
-    using FluentValidation;
-    using JobBoardApi.DTOs;
+﻿using FluentValidation;
+using JobBoardApi.DTOs;
 
+namespace JobBoardApi.Validators
+{
     public class JobApplicationDtoValidator : AbstractValidator<JobApplicationDto>
     {
         public JobApplicationDtoValidator()

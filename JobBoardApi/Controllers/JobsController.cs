@@ -1,4 +1,5 @@
 ﻿using JobBoardApi.DTOs;
+using JobBoardApi.Helpers;
 using JobBoardApi.Interfaces;
 using JobBoardApi.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -21,23 +22,18 @@ namespace JobBoardApi.Controllers
         public async Task<IActionResult> GetAll()
         {
             var jobs = await _jobService.GetAllJobsAsync();
-            return Ok(jobs);
+            return Ok(new ApiResponse<IEnumerable<Job>>(jobs,"All jobs"));
+
         }
         [HttpPost]
         [Authorize(Roles = "Employer,Admin")]
         public async Task<IActionResult> Create([FromBody] CreateJobDto dto)
         {
-            var job = new Job
-            {
-                Title = dto.Title,
-                Description = dto.Description,
-                Company = dto.Company
-            };
-
-            var created = await _jobService.CreateJobAsync(job);
-            return CreatedAtAction(nameof(GetAll), new { id = created.Id }, created);
+            var created = await _jobService.CreateJobAsync(dto);
+            return CreatedAtAction(nameof(GetAll), new { id = created.Id },
+             new ApiResponse<Job>(created, "Job created successfully"));
         }
-        [HttpPut("{id}/approve")]
+            [HttpPut("{id}/approve")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> ApproveJob(int id)
         {
@@ -47,7 +43,7 @@ namespace JobBoardApi.Controllers
             job.IsApproved = true;
             await _jobService.UpdateJobAsync(job);
 
-            return Ok(new { message = "Job approved" });
+            return Ok(new ApiResponse<string>("Job approved"));
         }
 
     }

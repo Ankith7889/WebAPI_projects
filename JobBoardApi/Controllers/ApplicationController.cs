@@ -1,5 +1,8 @@
 ﻿using System.Security.Claims;
+using JobBoardApi.DTOs;
+using JobBoardApi.Helpers;
 using JobBoardApi.Interfaces;
+using JobBoardApi.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -27,7 +30,7 @@ namespace JobBoardApi.Controllers
 
             int userId = int.Parse(userIdClaim.Value);
             await _appService.ApplyToJobAsync(userId, jobId);
-            return Ok(new { message = "Applied successfully" });
+            return Ok(new ApiResponse<string>("Job Applied successfully"));
         }
 
 
@@ -35,14 +38,14 @@ namespace JobBoardApi.Controllers
         public async Task<IActionResult> GetByUser(int userId)
         {
             var apps = await _appService.GetApplicationsForUser(userId);
-            return Ok(apps);
+            return Ok(new ApiResponse<IEnumerable<JobApplicationDto>>(apps, "Applications for user"));
         }
 
         [HttpGet("job/{jobId}")]
         public async Task<IActionResult> GetByJob(int jobId)
         {
             var apps = await _appService.GetApplicationsForJob(jobId);
-            return Ok(apps);
+            return Ok(new ApiResponse<IEnumerable<JobApplicationDto>>(apps, "Applications for user"));
         }
     }
 

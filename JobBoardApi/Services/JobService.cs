@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using JobBoardApi.DTOs;
 using JobBoardApi.Interfaces;
 using JobBoardApi.Models;
 
@@ -14,8 +15,9 @@ namespace JobBoardApi.Services
             _mapper = mapper;
         }
 
-        public async Task<Job> CreateJobAsync(Job job)
+        public async Task<Job> CreateJobAsync(CreateJobDto dto)
         {
+            var job = _mapper.Map<Job>(dto);
             await _jobRepository.AddAsync(job);
             await _jobRepository.SaveChangesAsync();
             return job;
